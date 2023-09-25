@@ -14,7 +14,6 @@ const validate = (schemaObj) => (req, res, next) => {
     throw new BadRequestError(error.message);
   }
 
-  console.log(value);
   next();
 };
 

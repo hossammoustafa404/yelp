@@ -8,7 +8,6 @@ const app = express();
 
 // Middlewares
 app.use(express.json());
-app.use(express.urlencoded());
 
 // Routes
 app.use("/api/v1", appRouter);
@@ -19,7 +18,7 @@ app.use(errorHandler);
 const port = config.app.port;
 const start = () => {
   app.listen(port, () => {
-    console.log(`Server is listening on port ${port})`);
+    console.log(`Server is listening on port ${port}`);
   });
 };
 start();

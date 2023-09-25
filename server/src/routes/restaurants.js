@@ -1,32 +1,30 @@
 const Joi = require("joi");
 const {
   createSingleRestaurant,
-  getAllRestaurants,
+  getManyRestaurants,
   getSingleRestaurant,
   updateSingleRestaurant,
   deleteSingleRestaurant,
-  updateManyRestaurants,
-  deleteManyRestaurants,
 } = require("../controllers/restaurants");
 const validate = require("../middlewares/validate");
 const {
   createSingleRestaurantObj,
   updateSingleRestaurantObj,
-  updateManyRestaurantsObj,
   deleteSingleRestaurantObj,
 } = require("../validators/restaurants");
+const reviewsRouter = require("./reviews");
 
 const router = require("express").Router();
+
+router.use("/:restaurantId/reviews", reviewsRouter);
 
 router
   .route("/")
   .post(validate(createSingleRestaurantObj), createSingleRestaurant)
-  .get(getAllRestaurants)
-  .patch(validate(updateManyRestaurantsObj), updateManyRestaurants)
-  .delete(deleteManyRestaurants);
+  .get(getManyRestaurants);
 
 router
-  .route("/:id")
+  .route("/:restaurantId")
   .get(getSingleRestaurant)
   .patch(validate(updateSingleRestaurantObj), updateSingleRestaurant)
   .delete(validate(deleteSingleRestaurantObj), deleteSingleRestaurant);

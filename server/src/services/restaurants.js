@@ -15,8 +15,10 @@ const createRestaurantService = async (createRestaurantObj) => {
 };
 
 // Get Single Restaurant
-const getSingleRestaurantService = async (id) => {
-  const result = await query("SELECT * FROM restaurant WHERE id = $1", [id]);
+const getSingleRestaurantService = async (restaurantId) => {
+  const result = await query("SELECT * FROM restaurant WHERE id = $1", [
+    restaurantId,
+  ]);
 
   if (!result.rowCount) {
     throw new NotFoundError("Restaurant does not exist");
@@ -25,21 +27,24 @@ const getSingleRestaurantService = async (id) => {
   return { ...result };
 };
 
-// Get All Restaurants
-const getAllRestaurantsService = async (filterQuery) => {
+// Get Many Restaurants
+const getManyRestaurantsService = async (filterQuery) => {
   const result = await query("SELECT * FROM restaurant");
   return { ...result };
 };
 
 // Update Single Restaurant
-const updateSingleRestaurantService = async (id, updateRestaurantObj) => {
+const updateSingleRestaurantService = async (
+  restaurantId,
+  updateRestaurantObj
+) => {
   const setString = Object.keys(updateRestaurantObj)
     .map((key, index) => `${key}=$${index + 2}`)
     .join(", ");
 
   const result = await query(
     `UPDATE restaurant SET ${setString} WHERE id = $1 RETURNING *`,
-    [id, ...Object.values(updateRestaurantObj)]
+    [restaurantId, ...Object.values(updateRestaurantObj)]
   );
 
   if (!result.rowCount) {
@@ -49,44 +54,18 @@ const updateSingleRestaurantService = async (id, updateRestaurantObj) => {
   return { ...result };
 };
 
-// Update Many Restaurants Service
-const updateManyRestaurantService = async (
-  filterQuery,
-  updateManyRestaurantsObj
-) => {
-  if (!Object.keys(filterQuery).length) {
-    throw new BadRequestError("At least one query must be provided");
-  }
-
-  const setString = Object.keys(updateManyRestaurantsObj)
-    .map((key, index) => `${key}=$${index + 1}`)
-    .join(", ");
-
-  const whereString = Object.keys(filterQuery)
-    .map((key, index) => `${key}=$${index + setString.split(",").length + 1}`)
-    .join(" AND ");
-
-  console.log(whereString);
-
-  const result = await query(
-    `UPDATE restaurant SET ${setString} WHERE ${whereString} RETURNING *`,
-    [...Object.values(updateManyRestaurantsObj), ...Object.values(filterQuery)]
-  );
-
-  return { ...result };
-};
-
 // Delete Single Restaurant Service
-const deleteSingleRestaurantService = async (id) => {
-  const result = await query("DELETE FROM restaurant WHERE id = $1", [id]);
+const deleteSingleRestaurantService = async (restaurantId) => {
+  const result = await query("DELETE FROM restaurant WHERE id = $1", [
+    restaurantId,
+  ]);
   return { ...result };
 };
 
 module.exports = {
   createRestaurantService,
-  getAllRestaurantsService,
+  getManyRestaurantsService,
   getSingleRestaurantService,
   updateSingleRestaurantService,
-  updateManyRestaurantService,
   deleteSingleRestaurantService,
 };

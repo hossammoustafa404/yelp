@@ -5,10 +5,10 @@ const { NotFoundError, BadRequestError } = require("../lib/errors");
 // Create Restaurant
 const createRestaurantService = async (createRestaurantObj) => {
   const id = uuid();
-  const { name, location, priceRange } = createRestaurantObj;
+  const { name, location, price_range } = createRestaurantObj;
   const result = await query(
     `INSERT INTO restaurant (id,name,location,price_range) Values ($1, $2,$3,$4) RETURNING *`,
-    [id, name, location, priceRange]
+    [id, name, location, price_range]
   );
 
   return { ...result };
@@ -16,9 +16,11 @@ const createRestaurantService = async (createRestaurantObj) => {
 
 // Get Single Restaurant
 const getSingleRestaurantService = async (restaurantId) => {
-  const result = await query("SELECT * FROM restaurant WHERE id = $1", [
-    restaurantId,
-  ]);
+  const result = await query(
+    "SELECT * FROM restaurant LEFT JOIN (SELECT restaurant_id, COUNT(restaurant_id) as reviews_count, ROUND(AVG(rating),1) as avg_rating FROM review GROUP BY restaurant_id) review\
+  ON review.restaurant_id = restaurant.id WHERE id = $1",
+    [restaurantId]
+  );
 
   if (!result.rowCount) {
     throw new NotFoundError("Restaurant does not exist");
@@ -28,8 +30,11 @@ const getSingleRestaurantService = async (restaurantId) => {
 };
 
 // Get Many Restaurants
-const getManyRestaurantsService = async (filterQuery) => {
-  const result = await query("SELECT * FROM restaurant");
+const getManyRestaurantsService = async () => {
+  const result = await query(
+    "SELECT * FROM restaurant LEFT JOIN (SELECT restaurant_id, COUNT(restaurant_id) as reviews_count, ROUND(AVG(rating),1) as avg_rating FROM review GROUP BY restaurant_id) review\
+     ON review.restaurant_id = restaurant.id"
+  );
   return { ...result };
 };
 

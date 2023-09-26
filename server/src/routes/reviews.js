@@ -12,7 +12,6 @@ const {
   updateReviewObj,
   getSingleReviewObj,
   deleteReviewObj,
-  getManyReviewsObj,
 } = require("../validators/reviews");
 
 const router = require("express").Router({ mergeParams: true });
@@ -20,7 +19,7 @@ const router = require("express").Router({ mergeParams: true });
 router
   .route("/")
   .post(validate(createReviewObj), createSingleReview)
-  .get(validate(getManyReviewsObj), getManyReviews);
+  .get(getManyReviews);
 router
   .route("/:reviewId")
   .get(validate(getSingleReviewObj), getSingleReview)

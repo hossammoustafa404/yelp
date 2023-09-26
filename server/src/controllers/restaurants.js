@@ -29,6 +29,7 @@ const getManyRestaurants = async (req, res) => {
 
 // Update Single Restuarant
 const updateSingleRestaurant = async (req, res) => {
+  console.log(req.body);
   const { rows } = await updateSingleRestaurantService(
     req.params.restaurantId,
     req.body

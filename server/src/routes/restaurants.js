@@ -11,6 +11,7 @@ const {
   createSingleRestaurantObj,
   updateSingleRestaurantObj,
   deleteSingleRestaurantObj,
+  getSingleRestaurantObj,
 } = require("../validators/restaurants");
 const reviewsRouter = require("./reviews");
 
@@ -25,7 +26,7 @@ router
 
 router
   .route("/:restaurantId")
-  .get(getSingleRestaurant)
+  .get(validate(getSingleRestaurantObj), getSingleRestaurant)
   .patch(validate(updateSingleRestaurantObj), updateSingleRestaurant)
   .delete(validate(deleteSingleRestaurantObj), deleteSingleRestaurant);
 

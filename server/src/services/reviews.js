@@ -27,29 +27,16 @@ const getSingleReviewService = async (reviewId) => {
 };
 
 // Get Many Reviews Service
-const getManyReviewsService = async (filterQuery) => {
-  let whereString = null;
-  const isFilterQuery = filterQuery && Boolean(Object.keys(filterQuery).length);
-
-  if (isFilterQuery) {
-    whereString = Object.keys(filterQuery)
-      .map((key, index) => `${key}=$${index + 1}`)
-      .join(" AND ");
-  }
-
-  const filterValues = isFilterQuery ? Object.values(filterQuery) : [];
-
-  const result = await query(
-    `SELECT * FROM review ${isFilterQuery ? "WHERE " + whereString : ""}`,
-    [...filterValues]
-  );
+const getManyReviewsService = async (restaurant_id) => {
+  const result = await query(`SELECT * FROM review WHERE restaurant_id = $1`, [
+    restaurant_id,
+  ]);
 
   return { ...result };
 };
 
 // Update Single Review Service
 const updateSingleReviewService = async (reviewId, updateReviewObj) => {
-  console.log(reviewId);
   const setString = Object.keys(updateReviewObj)
     .map((key, index) => `${key}=$${index + 2}`)
     .join(", ");
@@ -59,6 +46,10 @@ const updateSingleReviewService = async (reviewId, updateReviewObj) => {
     [reviewId, ...Object.values(updateReviewObj)]
   );
 
+  if (!result.rowCount) {
+    throw new NotFoundError("Review does not exist");
+  }
+  
   return { ...result };
 };
 

@@ -23,7 +23,10 @@ const getSingleReview = async (req, res) => {
 
 // Get Many Reviews
 const getManyReviews = async (req, res) => {
-  const { rowCount, rows } = await getManyReviewsService(req.query);
+  const { rowCount, rows } = await getManyReviewsService(
+    req.params.restaurantId,
+    req.query
+  );
 
   return res.status(StatusCodes.OK).json({ nbhits: rowCount, reviews: rows });
 };
@@ -35,6 +38,7 @@ const updateSingleReview = async (req, res) => {
     req.body
   );
 
+  console.log(rows);
   return res.status(StatusCodes.OK).json({ review: rows[0] });
 };
 
